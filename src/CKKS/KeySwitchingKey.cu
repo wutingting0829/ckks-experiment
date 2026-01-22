@@ -9,7 +9,7 @@
 
 namespace FIDESlib::CKKS {
 void KeySwitchingKey::Initialize(Context& cc, RawKeySwitchKey& rkk) {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
+    CudaNvtxRange r("keySwitchingKey");
     for (int j = 0; j < cc.dnum; ++j) {
         a.generateDecompAndDigit();
         b.generateDecompAndDigit();
@@ -22,7 +22,7 @@ void KeySwitchingKey::Initialize(Context& cc, RawKeySwitchKey& rkk) {
 
 KeySwitchingKey::KeySwitchingKey(Context& cc)
     : my_range(loc, LIFETIME),
-      cc((CudaNvtxStart(std::string{std::source_location::current().function_name()}.substr(18 + strlen(loc))), cc)),
+      cc(cc),
       a(cc, -1),
       b(cc, -1) {
     CudaNvtxStop();

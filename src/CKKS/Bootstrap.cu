@@ -14,7 +14,9 @@ using namespace FIDESlib::CKKS;
 constexpr bool PRINT = false;
 
 void FIDESlib::CKKS::Bootstrap(Ciphertext& ctxt, const int slots) {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()});
+   // CudaNvtxRange r(std::string{std::source_location::current().function_name()});
+
+    CudaNvtxRange r("Bootstrap");
 
     Context& cc = ctxt.cc;
     /////////////////////////////////////////////////////////////////////

@@ -6,23 +6,6 @@
 #include "CKKS/Context.cuh"
 #include "CudaUtils.cuh"
 
-
-
-#ifdef __CUDACC__  // 用 nvcc 編 .cu 時會定義這個
-
-    // 在 CUDA 環境下，用 __func__ 當函式名稱（nvcc 支援）
-    #define FIDES_FUNC_NAME __func__
-
-#else
-
-    // 一般 C++ 編譯時，才用 C++20 的 source_location
-    #include <source_location>
-    #define FIDES_FUNC_NAME std::source_location::current().function_name()
-
-#endif
-
-
-
 constexpr bool PRINT = false;
 
 using namespace FIDESlib::CKKS;
@@ -35,7 +18,7 @@ void multIntScalar(Ciphertext& ctxt, uint64_t op);
 
 void FIDESlib::CKKS::approxModReduction(Ciphertext& ctxtEnc, Ciphertext& ctxtEncI,
                                         const KeySwitchingKey& keySwitchingKey, uint64_t post) {
-    CudaNvtxRange r(std::string{FIDES_FUNC_NAME});
+    CudaNvtxRange r(std::string{std::source_location::current().function_name()});
 
     cudaDeviceSynchronize();
     Context& cc = ctxtEnc.cc;
@@ -89,7 +72,7 @@ void FIDESlib::CKKS::approxModReduction(Ciphertext& ctxtEnc, Ciphertext& ctxtEnc
 
 void FIDESlib::CKKS::approxModReductionSparse(Ciphertext& ctxtEnc, const KeySwitchingKey& keySwitchingKey,
                                               uint64_t post) {
-    CudaNvtxRange r(std::string{FIDES_FUNC_NAME});
+    CudaNvtxRange r(std::string{std::source_location::current().function_name()});
     Context& cc = ctxtEnc.cc;
     evalChebyshevSeries(ctxtEnc, keySwitchingKey, cc.GetCoeffsChebyshev(), -1.0, 1.0);
 
@@ -123,14 +106,14 @@ void FIDESlib::CKKS::approxModReductionSparse(Ciphertext& ctxtEnc, const KeySwit
 }
 
 void FIDESlib::CKKS::multIntScalar(Ciphertext& ctxt, uint64_t op) {
-    CudaNvtxRange r(std::string{FIDES_FUNC_NAME});
+    CudaNvtxRange r(std::string{std::source_location::current().function_name()});
     std::vector<uint64_t> op_(ctxt.getLevel() + 1, op);
     ctxt.c0.multScalar(op_);
     ctxt.c1.multScalar(op_);
 };
 
 void FIDESlib::CKKS::multMonomial(Ciphertext& ctxt, int power) {
-    CudaNvtxRange r(std::string{FIDES_FUNC_NAME});
+    CudaNvtxRange r(std::string{std::source_location::current().function_name()});
     //assert(power < ctxt.cc.N);
     // TODO compute fully as a GPU function.
     RNSPoly monomial(ctxt.cc, ctxt.c0.getLevel(), true);
@@ -195,7 +178,7 @@ usint M                   = 2 * N;
 void innerEvalChebyshevPS(const Ciphertext& ctxt, const KeySwitchingKey& kskEval, Ciphertext& out,
                           const std::vector<double>& coefficients, uint32_t k, uint32_t m, std::vector<Ciphertext>& T,
                           std::vector<Ciphertext>& T2) {
-    FIDESlib::CudaNvtxRange r(std::string{FIDES_FUNC_NAME});
+    FIDESlib::CudaNvtxRange r(std::string{std::source_location::current().function_name()});
     /*
 Ciphertext<DCRTPoly> AdvancedSHECKKSRNS::InnerEvalChebyshevPS(ConstCiphertext<DCRTPoly> x,
                                                               const std::vector<double>& coefficients, uint32_t k,
@@ -500,7 +483,7 @@ Ciphertext<DCRTPoly> AdvancedSHECKKSRNS::InnerEvalChebyshevPS(ConstCiphertext<DC
  */
 void evalChebyshevSeries(Ciphertext& ctxt, const KeySwitchingKey& keySwitchingKey, std::vector<double>& coefficients,
                          double lower_bound, double upper_bound) {
-    FIDESlib::CudaNvtxRange r(std::string{FIDES_FUNC_NAME});
+    FIDESlib::CudaNvtxRange r(std::string{std::source_location::current().function_name()});
     /*
     Ciphertext<DCRTPoly> AdvancedSHECKKSRNS::EvalChebyshevSeriesPS(ConstCiphertext<DCRTPoly> x,
 const std::vector<double>& coefficients, double a, double b) const {
@@ -955,7 +938,7 @@ const std::vector<double>& coefficients, double a, double b) const {
     if constexpr (PRINT) {
         std::cout << "su cheby " << su.getLevel() << std::endl;
         for (auto& i : su.c0.GPU.at(0).limb) {
-            SWITCH(i, printThisLimb(1));
+            SWITCH(i, printThisLimdb(1));
         }
         std::cout << std::endl;
     }
@@ -1029,7 +1012,7 @@ const std::vector<double>& coefficients, double a, double b) const {
 }
 
 void applyDoubleAngleIterations(Ciphertext& ctxt, int its, const KeySwitchingKey& kskEval) {
-    FIDESlib::CudaNvtxRange r_(std::string{FIDES_FUNC_NAME});
+    FIDESlib::CudaNvtxRange r_(std::string{std::source_location::current().function_name()});
     Context& cc = ctxt.cc;
     int32_t r = its;
     //std::cout << "Its: " << its << std::endl;

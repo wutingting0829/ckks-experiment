@@ -118,3 +118,11 @@ If you have any question, comment, or suggestion, please contact:
 * Óscar Vera López (oscar.veral@um.es).
 
 Or feel free to open an issue or a general discussion on this repository.
+
+---
+## Fangting Test - only test on CPU
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+./build/demo_addsub
+```

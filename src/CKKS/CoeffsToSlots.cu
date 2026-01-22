@@ -13,7 +13,7 @@
 using namespace FIDESlib::CKKS;
 
 void FIDESlib::CKKS::EvalLinearTransform(Ciphertext& ctxt, int slots, bool decode) {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()});
+    CudaNvtxRange r("EvalLinearTransform");
 
     /*
     auto pair = m_bootPrecomMap.find(slots);
@@ -89,7 +89,7 @@ void FIDESlib::CKKS::EvalLinearTransform(Ciphertext& ctxt, int slots, bool decod
 }
 
 void FIDESlib::CKKS::EvalCoeffsToSlots(Ciphertext& ctxt, int slots, bool decode) {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()});
+    CudaNvtxRange r("EvalCoeffsToSlots");
 
     Context& cc = ctxt.cc;
     //  No need for Encrypted Bit Reverse

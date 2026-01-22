@@ -68,8 +68,7 @@ bool Context::isValidPrimeId(const int i) const {
 
 Context::Context(Parameters param, const std::vector<int>& devs, const int secBits)
     : my_range(loc, LIFETIME),
-      param((CudaNvtxStart(std::string{std::source_location::current().function_name()}.substr(18 + strlen(loc))),
-             param)),
+      param(param),
       logN(param.logN),
       N(1 << logN),
       slots(1 << (logN - 1)),

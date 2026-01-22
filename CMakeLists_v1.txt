@@ -112,7 +112,7 @@ include_directories(${OpenFHE_INCLUDE}/third-party/include)
 include_directories(${OpenFHE_INCLUDE}/core)
 include_directories(${OpenFHE_INCLUDE}/pke)
 include_directories(${OpenFHE_INCLUDE}/binfhe)
-
+include_directories(/path/to/openfhe/include)
 
 # link_directories(${OpenFHE_LIBDIR})
 # link_directories(${OPENMP_LIBRARIES})
@@ -223,32 +223,13 @@ target_compile_options(dummy PRIVATE
 
 ############### Demo: demo_addsub ###################
 
-# add_executable(demo_addsub examples/demo_addsub/src/main.cu)
+add_executable(demo_addsub examples/demo_addsub/src/main.cu)
 #target_link_libraries(demo_addsub PRIVATE fideslib)
-
-file(GLOB DEMO_ADDSUB_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/examples/demo_addsub/src/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/examples/demo_addsub/src/*.cu
-)
-add_executable(demo_addsub ${DEMO_ADDSUB_SRC})
-
-# target_link_libraries(demo_addsub
-#   PRIVATE
-#     fideslib
-#     OpenMP::OpenMP_CXX
-#     OpenMP::OpenMP_C
-# )
-
 target_link_libraries(demo_addsub
   PRIVATE
     fideslib
     OpenMP::OpenMP_CXX
-    $<LINK_GROUP:RESCAN,
-        ${OpenFHE_LIBDIR}/libOPENFHEpke_static.a,
-        ${OpenFHE_LIBDIR}/libOPENFHEcore_static.a,
-        ${OpenFHE_LIBDIR}/libOPENFHEbinfhe_static.a,
-        ${OpenFHE_LIBDIR}/libOPENFHEhook_static.a
-    >
+    OpenMP::OpenMP_C
 )
 
 

@@ -11,28 +11,28 @@ namespace FIDESlib::CKKS {
 
 Plaintext::Plaintext(Context& cc)
     : my_range(loc, LIFETIME),
-      cc((CudaNvtxStart(std::string{std::source_location::current().function_name()}.substr(18 + strlen(loc))), cc)),
+      cc(cc),
       c0(cc) {
     CudaNvtxStop();
 }
 
 Plaintext::Plaintext(Context& cc, const RawPlainText& raw)
     : my_range(loc, LIFETIME),
-      cc((CudaNvtxStart(std::string{std::source_location::current().function_name()}.substr(18 + strlen(loc))), cc)),
+      cc(cc),
       c0(cc) {
     load(raw);
     CudaNvtxStop();
 }
 
 void Plaintext::load(const RawPlainText& raw) {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
+    CudaNvtxRange r("Plaintext");
     c0.loadConstant(raw.sub_0, raw.moduli);
     NoiseFactor = raw.Noise;
     NoiseLevel = raw.NoiseLevel;
 }
 
 void Plaintext::store(RawPlainText& raw) {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
+    CudaNvtxRange r("Plaintext");
     c0.store(raw.sub_0);
 
     cudaDeviceSynchronize();
@@ -49,12 +49,12 @@ void Plaintext::store(RawPlainText& raw) {
 }
 
 void Plaintext::moddown() {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
+    CudaNvtxRange r("Plaintext");
     c0.moddown(true, true);
 }
 
 bool Plaintext::adjustPlaintextToCiphertext(const Plaintext& p, const Ciphertext& c) {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
+    CudaNvtxRange r("Plaintext");
     if (cc.rescaleTechnique == Context::FIXEDAUTO) {
         if (p.c0.getLevel() - p.NoiseLevel > c.getLevel() - c.NoiseLevel) {
             this->copy(p);
@@ -161,13 +161,14 @@ bool Plaintext::adjustPlaintextToCiphertext(const Plaintext& p, const Ciphertext
     return false;
 }
 void Plaintext::copy(const Plaintext& p) {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
+    CudaNvtxRange r("Plaintext");
     this->c0.copy(p.c0);
     this->NoiseFactor = p.NoiseFactor;
     this->NoiseLevel = p.NoiseLevel;
 }
 void Plaintext::multScalar(double c, bool rescale) {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
+    CudaNvtxRange r("Plaintext");
+    //CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
     /*
     if (cc.rescaleTechnique == Context::FLEXIBLEAUTO || cc.rescaleTechnique == Context::FLEXIBLEAUTOEXT ||
         cc.rescaleTechnique == Context::FIXEDAUTO) {
@@ -191,7 +192,9 @@ void Plaintext::multScalar(double c, bool rescale) {
     }
 }
 void Plaintext::rescale() {
-    CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
+    CudaNvtxRange r("Plaintext");
+
+    //CudaNvtxRange r(std::string{std::source_location::current().function_name()}.substr(23 + strlen(loc)));
     assert(this->NoiseLevel >= 2);
 
     c0.rescale();
